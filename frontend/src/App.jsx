@@ -310,6 +310,7 @@ export default function FitnessAndHealthGoals() {
       }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka+One&display=swap');
+          * { box-sizing: border-box; }
           .welcome-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(12px); padding: 45px 40px; border-radius: 24px; box-shadow: 0 12px 40px rgba(201, 79, 30, 0.12); border: 2px solid rgba(232, 223, 208, 0.9); text-align: center; max-width: 420px; width: 100%; animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
           @keyframes floatIn { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
           .welcome-title { font-family: 'Fredoka One', cursive; font-size: 2.3rem; color: #c94f1e; text-shadow: 2px 2px 0 #f9c48a; margin: 0 0 4px; line-height: 1.1; }
