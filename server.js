@@ -5,7 +5,18 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DB_PATH = path.join(__dirname, 'db.json');
+
+const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID;
+const DATA_DIR = isRailway ? '/data' : __dirname;
+const DB_PATH = path.join(DATA_DIR, 'db.json');
+
+if (isRailway && !fs.existsSync(DB_PATH)) {
+    const seedPath = path.join(__dirname, 'db.json');
+    if (fs.existsSync(seedPath)) {
+        if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+        fs.copyFileSync(seedPath, DB_PATH);
+    }
+}
 
 app.use(cors());
 // Increased limit for large cells objects

@@ -122,6 +122,7 @@ export default function FitnessAndHealthGoals() {
   const [usersList, setUsersList] = useState([]);
   const [activeUser, setActiveUser] = useState("");
   const [dbData, setDbData] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const inputRef = useRef(null);
   const healthInputRef = useRef(null);
   const goalInputRef = useRef(null);
@@ -296,6 +297,54 @@ export default function FitnessAndHealthGoals() {
 
   const streakEmoji = (n) => n >= 14 ? "🔥🔥" : n >= 7 ? "🔥" : n >= 3 ? "✦" : "";
 
+  if (!isAuthenticated) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "#fdf6ec",
+        backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dfd0 31px,#e8dfd0 32px)",
+        fontFamily: "'Patrick Hand', cursive",
+        display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+      }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka+One&display=swap');
+          .welcome-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(12px); padding: 45px 40px; border-radius: 24px; box-shadow: 0 12px 40px rgba(201, 79, 30, 0.12); border: 2px solid rgba(232, 223, 208, 0.9); text-align: center; max-width: 420px; width: 100%; animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+          @keyframes floatIn { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+          .welcome-title { font-family: 'Fredoka One', cursive; font-size: 2.3rem; color: #c94f1e; text-shadow: 2px 2px 0 #f9c48a; margin: 0 0 4px; line-height: 1.1; }
+          .welcome-sub { font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #7a5c3a; letter-spacing: 3px; margin: 0 0 35px; text-transform: uppercase; }
+          .welcome-select { width: 100%; font-family: 'Fredoka One', cursive; font-size: 1.15rem; padding: 14px 20px; border-radius: 14px; border: 2px solid #d5c9b8; background: #fffaf4; color: #7a5c3a; outline: none; cursor: pointer; box-shadow: inset 0 2px 6px rgba(122, 92, 58, 0.05); margin-bottom: 28px; transition: border-color 0.2s, box-shadow 0.2s; text-align: center; }
+          .welcome-select:hover, .welcome-select:focus { border-color: #e8623a; box-shadow: 0 0 0 4px rgba(232, 98, 58, 0.1); }
+          .welcome-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Fredoka One', cursive; font-size: 1.2rem; padding: 16px; border-radius: 16px; border: none; background: linear-gradient(135deg, #e8623a, #c94f1e); color: #fff; cursor: pointer; box-shadow: 0 6px 20px rgba(232, 98, 58, 0.3); transition: transform 0.2s, box-shadow 0.2s; }
+          .welcome-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(232, 98, 58, 0.4); }
+          .welcome-btn:active:not(:disabled) { transform: translateY(1px); }
+        `}</style>
+        <div className="welcome-card">
+          <h1 className="welcome-title">✦ Welcome ✦</h1>
+          <p className="welcome-sub">Select your Tracking Profile</p>
+          
+          <select 
+            className="welcome-select"
+            value={activeUser}
+            onChange={handleUserChange}
+            disabled={usersList.length === 0}
+          >
+            {usersList.length === 0 && <option value="">Loading users...</option>}
+            {usersList.map(u => <option key={u} value={u}>👤 {u}</option>)}
+          </select>
+
+          <button 
+            className="welcome-btn"
+            onClick={() => setIsAuthenticated(true)}
+            disabled={usersList.length === 0}
+            style={{ opacity: usersList.length === 0 ? 0.6 : 1, cursor: usersList.length === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            🚀 Enter Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -379,20 +428,19 @@ export default function FitnessAndHealthGoals() {
       <h1 className="bn-title">✦ HEALTH & FITNESS TRACKER ✦</h1>
       <p className="bn-sub">DAILY HABIT TRACKER</p>
 
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px", gap: "12px", alignItems: "center" }}>
-        {usersList.length > 0 && (
-          <select 
-            value={activeUser}
-            onChange={handleUserChange}
-            style={{
-              fontFamily: "'Fredoka One',cursive", fontSize: "0.95rem", padding: "9px 16px",
-              borderRadius: "14px", border: "2px solid #d5c9b8", background: "#fffaf4",
-              color: "#7a5c3a", outline: "none", cursor: "pointer", boxShadow: "0 2px 8px #7a5c3a10"
-            }}
-          >
-            {usersList.map(u => <option key={u} value={u}>👤 {u}</option>)}
-          </select>
-        )}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+        <button 
+          onClick={() => setIsAuthenticated(false)}
+          style={{
+            display: "flex", alignItems: "center", gap: "7px", fontFamily: "'Fredoka One',cursive",
+            fontSize: "0.95rem", padding: "9px 16px", borderRadius: "14px", border: "2px solid #d5c9b8",
+            background: "#fffaf4", color: "#7a5c3a", cursor: "pointer", boxShadow: "0 2px 8px #7a5c3a10",
+            transition: "all 0.15s"
+          }}
+          title="Switch User Profile"
+        >
+          👤 {activeUser} (Switch)
+        </button>
         <button 
           onClick={saveToDatabase}
           style={{
