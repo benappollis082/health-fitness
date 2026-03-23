@@ -68,6 +68,32 @@ app.post('/api/data', (req, res) => {
     res.status(200).json({ message: 'Data saved successfully' });
 });
 
+app.post('/api/users', (req, res) => {
+    const { user } = req.body;
+    const db = readDB();
+
+    if (!db.users) db.users = [];
+    if (user && !db.users.includes(user)) {
+        db.users.push(user);
+    }
+
+    writeDB(db);
+    res.status(200).json({ message: 'User saved successfully' });
+});
+
+app.post('/api/activities', (req, res) => {
+    const { activity } = req.body;
+    const db = readDB();
+
+    if (!db.activities) db.activities = [];
+    if (activity && !db.activities.includes(activity)) {
+        db.activities.push(activity);
+    }
+
+    writeDB(db);
+    res.status(200).json({ message: 'Activity saved successfully' });
+});
+
 app.get('*', (req, res) => {
     if (!req.path.startsWith('/api/')) {
         res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
