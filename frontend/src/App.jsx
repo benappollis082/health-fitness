@@ -123,6 +123,8 @@ export default function FitnessAndHealthGoals() {
   const [activeUser, setActiveUser] = useState("");
   const [dbData, setDbData] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [loginError, setLoginError] = useState("");
   const inputRef = useRef(null);
   const healthInputRef = useRef(null);
   const goalInputRef = useRef(null);
@@ -314,6 +316,9 @@ export default function FitnessAndHealthGoals() {
           .welcome-sub { font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #7a5c3a; letter-spacing: 3px; margin: 0 0 35px; text-transform: uppercase; }
           .welcome-select { width: 100%; font-family: 'Fredoka One', cursive; font-size: 1.15rem; padding: 14px 20px; border-radius: 14px; border: 2px solid #d5c9b8; background: #fffaf4; color: #7a5c3a; outline: none; cursor: pointer; box-shadow: inset 0 2px 6px rgba(122, 92, 58, 0.05); margin-bottom: 28px; transition: border-color 0.2s, box-shadow 0.2s; text-align: center; }
           .welcome-select:hover, .welcome-select:focus { border-color: #e8623a; box-shadow: 0 0 0 4px rgba(232, 98, 58, 0.1); }
+          .welcome-input { width: 100%; font-family: 'Patrick Hand', cursive; font-size: 1.15rem; padding: 12px 20px; border-radius: 14px; border: 2px solid #d5c9b8; background: #fffaf4; color: #7a5c3a; outline: none; box-shadow: inset 0 2px 6px rgba(122, 92, 58, 0.05); margin-bottom: 4px; transition: border-color 0.2s, box-shadow 0.2s; text-align: center; }
+          .welcome-input:focus { border-color: #e8623a; box-shadow: 0 0 0 4px rgba(232, 98, 58, 0.1); }
+          .error-text { color: #e05050; font-family: 'Patrick Hand', cursive; font-size: 0.95rem; min-height: 20px; margin-bottom: 20px; }
           .welcome-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Fredoka One', cursive; font-size: 1.2rem; padding: 16px; border-radius: 16px; border: none; background: linear-gradient(135deg, #e8623a, #c94f1e); color: #fff; cursor: pointer; box-shadow: 0 6px 20px rgba(232, 98, 58, 0.3); transition: transform 0.2s, box-shadow 0.2s; }
           .welcome-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(232, 98, 58, 0.4); }
           .welcome-btn:active:not(:disabled) { transform: translateY(1px); }
@@ -324,17 +329,40 @@ export default function FitnessAndHealthGoals() {
           
           <select 
             className="welcome-select"
+            style={{ marginBottom: "15px" }}
             value={activeUser}
-            onChange={handleUserChange}
+            onChange={(e) => { handleUserChange(e); setLoginError(""); setPasswordInput(""); }}
             disabled={usersList.length === 0}
           >
             {usersList.length === 0 && <option value="">Loading users...</option>}
             {usersList.map(u => <option key={u} value={u}>👤 {u}</option>)}
           </select>
 
+          {usersList.length > 0 && (
+            <>
+              <input 
+                type="password"
+                className="welcome-input"
+                placeholder="Enter Password"
+                value={passwordInput}
+                onChange={(e) => { setPasswordInput(e.target.value); setLoginError(""); }}
+                onKeyDown={(e) => { 
+                  if (e.key === 'Enter') {
+                    if (passwordInput === activeUser) { setIsAuthenticated(true); setLoginError(""); setPasswordInput(""); }
+                    else { setLoginError("Incorrect password"); }
+                  }
+                }}
+              />
+              <div className="error-text">{loginError}</div>
+            </>
+          )}
+
           <button 
             className="welcome-btn"
-            onClick={() => setIsAuthenticated(true)}
+            onClick={() => {
+              if (passwordInput === activeUser) { setIsAuthenticated(true); setLoginError(""); setPasswordInput(""); }
+              else { setLoginError("Incorrect password"); }
+            }}
             disabled={usersList.length === 0}
             style={{ opacity: usersList.length === 0 ? 0.6 : 1, cursor: usersList.length === 0 ? 'not-allowed' : 'pointer' }}
           >
@@ -430,7 +458,7 @@ export default function FitnessAndHealthGoals() {
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
         <button 
-          onClick={() => setIsAuthenticated(false)}
+          onClick={() => { setIsAuthenticated(false); setPasswordInput(""); setLoginError(""); }}
           style={{
             display: "flex", alignItems: "center", gap: "7px", fontFamily: "'Fredoka One',cursive",
             fontSize: "0.95rem", padding: "9px 16px", borderRadius: "14px", border: "2px solid #d5c9b8",
