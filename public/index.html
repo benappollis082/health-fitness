@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & Fitness Hub</title>
+    <meta name="description" content="Local Health and Fitness Tracker">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-beams"></div>
+    <div class="container">
+        <header>
+            <h1>Health <span class="highlight">&</span> Fitness</h1>
+            <p>Your elegant local activity tracker.</p>
+        </header>
+        
+        <main>
+            <section class="glass-panel" id="users-panel">
+                <h2>Users</h2>
+                <div class="list-container" id="users-list">
+                    <!-- Users loaded dynamically -->
+                </div>
+                <form id="add-user-form" class="add-form">
+                    <input type="text" id="new-user-input" placeholder="Enter new user..." required aria-label="New user name">
+                    <button type="submit">Add User</button>
+                </form>
+            </section>
+
+            <section class="glass-panel" id="activities-panel">
+                <h2>Activities</h2>
+                <div class="list-container" id="activities-list">
+                    <!-- Activities loaded dynamically -->
+                </div>
+                <form id="add-activity-form" class="add-form">
+                    <input type="text" id="new-activity-input" placeholder="Enter new activity..." required aria-label="New activity name">
+                    <button type="submit">Add Activity</button>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
