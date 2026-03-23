@@ -30,7 +30,7 @@ const readDB = () => {
         const data = fs.readFileSync(DB_PATH, 'utf8');
         return JSON.parse(data);
     } catch (err) {
-        console.error('Error reading DB:', err);
+        console.error('[DB] Error reading from', DB_PATH, ':', err);
         return {};
     }
 };
@@ -38,8 +38,9 @@ const readDB = () => {
 const writeDB = (data) => {
     try {
         fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+        console.log('[DB] Data successfully written to', DB_PATH);
     } catch (err) {
-        console.error('Error writing DB:', err);
+        console.error('[DB] Error writing to', DB_PATH, ':', err);
     }
 };
 
@@ -69,12 +70,18 @@ app.post('/api/data', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
+    console.log('[POST /api/users] Request received. Body:', JSON.stringify(req.body));
     const { user } = req.body;
     const db = readDB();
 
     if (!db.users) db.users = [];
     if (user && !db.users.includes(user)) {
         db.users.push(user);
+        console.log('[POST /api/users] New user added:', user);
+    } else if (user) {
+        console.log('[POST /api/users] User already exists, skipping:', user);
+    } else {
+        console.warn('[POST /api/users] No user value provided in request body.');
     }
 
     writeDB(db);
@@ -82,12 +89,18 @@ app.post('/api/users', (req, res) => {
 });
 
 app.post('/api/activities', (req, res) => {
+    console.log('[POST /api/activities] Request received. Body:', JSON.stringify(req.body));
     const { activity } = req.body;
     const db = readDB();
 
     if (!db.activities) db.activities = [];
     if (activity && !db.activities.includes(activity)) {
         db.activities.push(activity);
+        console.log('[POST /api/activities] New activity added:', activity);
+    } else if (activity) {
+        console.log('[POST /api/activities] Activity already exists, skipping:', activity);
+    } else {
+        console.warn('[POST /api/activities] No activity value provided in request body.');
     }
 
     writeDB(db);
