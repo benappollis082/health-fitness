@@ -110,11 +110,16 @@ function computeMonthBestStreak(cells, year, monthName, days, key) {
   return best;
 }
 
+const TODAY = new Date();
+const TODAY_YEAR = TODAY.getFullYear();
+const TODAY_MONTH = MONTH_NAMES[TODAY.getMonth()];
+const TODAY_DAY = TODAY.getDate();
+
 export default function FitnessAndHealthGoals() {
   const [cells, setCells] = useState(buildInitialState);
   const [editing, setEditing] = useState(null);
-  const [activeYear, setActiveYear] = useState(2026);
-  const [activeMonth, setActiveMonth] = useState("January");
+  const [activeYear, setActiveYear] = useState(() => YEARS.includes(TODAY_YEAR) ? TODAY_YEAR : YEARS[0]);
+  const [activeMonth, setActiveMonth] = useState(TODAY_MONTH);
   const [sleepGoal, setSleepGoal] = useState(7.5);
   const [movementGoal, setMovementGoal] = useState(8);
   const [editingGoal, setEditingGoal] = useState(null);
@@ -613,7 +618,8 @@ export default function FitnessAndHealthGoals() {
                     <th style={{ background:"#fff4e6", width:100, border:"1px solid #d5c9b8" }} />
                     {dayArr.map(d => {
                       const dow = (startDow + d - 1) % 7;
-                      return <th key={d} className="day-th">{d}<div className="dow-th">{DAY_NAMES[dow]}</div></th>;
+                      const isTodayCol = d === TODAY_DAY && name === TODAY_MONTH && activeYear === TODAY_YEAR;
+                      return <th key={d} className="day-th" style={isTodayCol ? { background: '#e8623a', color: '#fff', borderRadius: '4px' } : undefined}>{d}<div className="dow-th" style={isTodayCol ? { color: '#fde8d8' } : undefined}>{DAY_NAMES[dow]}</div></th>;
                     })}
                     <th style={{ background:"#fff4e6", border:"1px solid #d5c9b8", fontSize:"0.6rem", color:"#b07840", fontFamily:"'Patrick Hand',cursive", width:48 }}>✓/tot</th>
                   </tr>
@@ -643,6 +649,7 @@ export default function FitnessAndHealthGoals() {
                           const dow = (startDow + d - 1) % 7;
                           const isWeekend = dow === 5 || dow === 6;
                           const isEdit = editing === id;
+                          const isToday = d === TODAY_DAY && name === TODAY_MONTH && activeYear === TODAY_YEAR;
                           const streak = dayStreaks[di];
                           const showMilestone = !isNumeric && streak > 0 && streak % 7 === 0;
                           let bg, textColor, missedGoal = false, extraClass = "";
@@ -660,7 +667,7 @@ export default function FitnessAndHealthGoals() {
                             if (!cell?.checked && isWeekend) extraClass=" weekend-empty";
                           }
                           return (
-                            <td key={d} className={`tracker-cell${extraClass}`} style={{ background:bg }}
+                            <td key={d} className={`tracker-cell${extraClass}`} style={{ background:bg, outline: isToday ? '2px solid #e8623a' : undefined, outlineOffset: '-2px', zIndex: isToday ? 1 : undefined }}
                               onClick={isNumeric ? e=>startEdit(activeYear,name,key,d,e) : ()=>toggle(activeYear,name,key,d)}
                               onDoubleClick={!isNumeric ? e=>startEdit(activeYear,name,key,d,e) : undefined}
                               title={isSleep ? `${cell?.value?cell.value+"h"+(missedGoal?` ⚠ below ${sleepGoal}h`:" ✓"):"not logged"}`
