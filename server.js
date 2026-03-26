@@ -69,16 +69,19 @@ app.post('/api/data', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    const { user } = req.body;
-    const db = readDB();
-
-    if (!db.users) db.users = [];
-    if (user && !db.users.includes(user)) {
-        db.users.push(user);
+    const { username, user } = req.body;
+    const name = username || user;
+    if (!name || typeof name !== 'string') {
+        return res.status(400).json({ error: 'username is required' });
     }
-
+    const db = readDB();
+    if (!db.users) db.users = [];
+    if (db.users.includes(name)) {
+        return res.status(409).json({ error: 'User already exists' });
+    }
+    db.users.push(name);
     writeDB(db);
-    res.status(200).json({ message: 'User saved successfully' });
+    res.status(200).json({ message: `User "${name}" added successfully`, users: db.users });
 });
 
 app.post('/api/activities', (req, res) => {
